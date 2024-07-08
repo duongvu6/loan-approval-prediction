@@ -28,3 +28,7 @@
 2) start app.py
 
         python app.py
+
+3) test the result
+      
+        curl -X POST -H 'Content-Type: application/json' -d '{"data":[3,"Graduate","No",5000000,12700000,14,865,4700000,8100000,19500000,6300000]}' http://127.0.0.1:8080/predict

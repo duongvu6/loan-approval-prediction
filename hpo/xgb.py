@@ -45,18 +45,6 @@ search_space = {
 
 def objective(params):
     with mlflow.start_run():
-        # booster = xgboost.train(
-        #     params=params,
-        #     dtrain=train,
-        #     num_boost_round=10,
-        #     evals=[(valid, 'validation')],
-        #     early_stopping_rounds=50,
-        #     verbose_eval=False
-        # )
-        # preds = booster.predict(valid)
-        # preds = (preds > 0.5).astype(int)
-        # accuracy = check_accuracy(y_test, preds)
-        # print(accuracy["accuracy_score"], params)
         params['max_depth'] = int(params['max_depth'])
         params['n_estimators'] = int(params['n_estimators'])
         params['min_child_weight'] = int(params['min_child_weight'])
