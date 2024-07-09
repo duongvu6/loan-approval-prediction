@@ -26,7 +26,7 @@ mlflow.set_experiment(EXPERIMENT_NAME)
 
     
 def transform_data(data):
-    df = pd.DataFrame([data], columns=[
+    df = pd.DataFrame(data, columns=[
             "no_of_dependents", "education", "self_employed", "income_annum", 
             "loan_amount", "loan_term", "cibil_score", "residential_assets_value", 
             "commercial_assets_value", "luxury_assets_value", "bank_asset_value"

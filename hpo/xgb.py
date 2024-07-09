@@ -10,7 +10,7 @@ from sklearn.model_selection import cross_val_score
 from hyperopt import hp, STATUS_OK, fmin, tpe, Trials
 from hyperopt.pyll import scope
 
-from utils import check_accuracy, load_pickle
+from utils import calculate_metrics, load_pickle
 
 load_dotenv()
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
@@ -27,7 +27,7 @@ data_path = os.path.join(DIR_PATH, CLEAR_DATA_PATH)
 
 X_train, y_train = load_pickle(os.path.join(data_path, "train.pkl"))
 X_val, y_val = load_pickle(os.path.join(data_path, "val.pkl"))
-X_test, y_test = load_pickle(os.path.join(data_path, "test.pkl"))
+# X_test, y_test = load_pickle(os.path.join(data_path, "test.pkl"))
 
 train = xgboost.DMatrix(X_train, label=y_train)
 valid = xgboost.DMatrix(X_val, label=y_val)
@@ -53,14 +53,15 @@ def objective(params):
         model = xgboost.XGBClassifier(**params, eval_metric='logloss')
         model.fit(X_train, y_train)
         y_pred = model.predict(X_val)
+        y_prob = model.predict_proba(X_val)[:, 1]
         
-        accuracy = check_accuracy(y_val, y_pred)
+        accuracy = calculate_metrics(y_val, y_pred, y_prob)
 
         mlflow.log_metrics(accuracy)
         mlflow.set_tag("model", "xgboost")
         mlflow.log_params(params)
 
-        return {'loss': -accuracy["accuracy_score"], 'status': STATUS_OK}
+        return {'loss': -accuracy["f1_score"], 'status': STATUS_OK}
     
 def hpo():
     mlflow.set_experiment(HPO_EXPERIMENT_NAME)
@@ -70,7 +71,7 @@ def hpo():
         fn=objective,
         space=search_space,
         algo=tpe.suggest,
-        max_evals=1,
+        max_evals=10,
         trials=trials
     )
     best_params['max_depth'] = int(best_params['max_depth'])
@@ -82,12 +83,13 @@ def main(best_params):
     mlflow.set_experiment(EXPERIMENT_NAME)
 
     model = xgboost.XGBClassifier(**best_params)
-    model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
+    model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
 
     y_pred = model.predict(X_val)
-    
-    accuracy = check_accuracy(y_val, y_pred)
-    signature = infer_signature(X_test, y_pred)
+    y_prob = model.predict_proba(X_val)[:, 1]
+        
+    accuracy = calculate_metrics(y_val, y_pred, y_prob)
+    signature = infer_signature(X_val, y_pred)
     
     mlflow.log_params(best_params)
     mlflow.log_metrics(accuracy)

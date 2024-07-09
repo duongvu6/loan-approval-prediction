@@ -15,7 +15,7 @@ model = load_model()
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json(force=True)
-    predict_request = transform_data(data['data'])
+    predict_request = transform_data([data['data']])
     predictions = model.predict(predict_request)
     
     return jsonify({'predictions': predictions.tolist()})

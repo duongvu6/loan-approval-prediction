@@ -16,7 +16,7 @@ client = MlflowClient(tracking_uri=MLFLOW_TRACKING_URI)
 def set_stage_to_best_model():
     best_model = {}
     for run in client.search_model_versions():
-        accuracy = client.get_run(run.run_id).data.metrics["accuracy_score"]
+        accuracy = client.get_run(run.run_id).data.metrics["f1_score"]
         if accuracy > best_model.get("accuracy", 0):
             best_model["run_id"] = run.run_id
             best_model["version"] = run.version
