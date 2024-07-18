@@ -21,14 +21,18 @@
 
 ## Start ML Project
 
-1) start mlflow server (ui)
+1) run mlflow server (ui)
 
         mlflow server --backend-store-uri sqlite:///config/mlflow.db
 
-2) start app.py
+2) run grafana and postgres
 
-        python app.py
+        docker compose up
 
-3) test the result
+3) run init.py
+
+        python init.py
+
+4) test the result
       
-        curl -X POST -H 'Content-Type: application/json' -d '{"data": [3,"Graduate","No",5000000,12700000,14,865,4700000,8100000,19500000,6300000]}' http://127.0.0.1:8080/predict
+        curl -X POST -H 'Content-Type: application/json' -d '{"data": [3,"Graduate","No",5000000,12700000,14,865,4700000,8100000,19500000,6300000]}' http://127.0.0.1:8000/predict
