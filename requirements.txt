@@ -1,0 +1,10 @@
+dotenv
+mlflow
+scikit-learn
+hyperopt
+scipy
+numpy
+xgboost
+flask
+psycopg
+pandas

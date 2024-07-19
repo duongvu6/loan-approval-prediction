@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 import pickle
-import click
 import numpy as np
 from dotenv import load_dotenv
 
@@ -46,12 +45,8 @@ def preprocess_answer(y):
     return np.array(list(map(lambda res: 1 if res == "Approved" else 0, y.values)))
 
 
-@click.command()
-@click.option(
-    "--raw_data_path",
-    help="Location where the raw data was saved"
-)
-def run_data_prep(raw_data_path: str):
+def run_data_prep():
+    raw_data_path = "data/raw_data/loan_approval.csv"
     # Load data
     df = read_dataframe(raw_data_path)
 
