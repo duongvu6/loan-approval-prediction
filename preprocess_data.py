@@ -14,7 +14,7 @@ from sklearn.pipeline import Pipeline
 from db import write_in_db
 
 load_dotenv()
-dest_path = os.getenv("CLEAR_DATA_PATH")
+dest_path = "data/clear_data"
 
 
 def read_dataframe(filename: str):
